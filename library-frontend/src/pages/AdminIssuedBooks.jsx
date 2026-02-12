@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
 import { Calendar, User as UserIcon, BookOpen } from 'lucide-react';
@@ -9,6 +9,8 @@ import { issueAPI } from '../services/api';
 const AdminIssuedBooks = () => {
   const [issuedBorrows, setIssuedBorrows] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [openProfileId, setOpenProfileId] = useState(null);
+  const profileMenuRef = useRef(null);
 
   useEffect(() => {
     const fetchIssuedBorrows = async () => {
@@ -24,6 +26,28 @@ const AdminIssuedBooks = () => {
     };
 
     fetchIssuedBorrows();
+  }, []);
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
+        setOpenProfileId(null);
+      }
+    };
+
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') {
+        setOpenProfileId(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleOutsideClick);
+    document.addEventListener('keydown', handleEscape);
+
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('keydown', handleEscape);
+    };
   }, []);
 
   if (loading) {
@@ -44,7 +68,7 @@ const AdminIssuedBooks = () => {
             Issued Books Details
           </h1>
           <p className="text-gray-300">
-            Active borrows with student details. Hover student name to view full profile.
+            Active borrows with student details. Click student name to view full profile.
           </p>
         </motion.div>
 
@@ -86,16 +110,25 @@ const AdminIssuedBooks = () => {
                   </div>
 
                   <div className="md:text-right">
-                    <div className="relative inline-block group">
+                    <div className="relative inline-block" ref={openProfileId === borrow.id ? profileMenuRef : null}>
                       <button
                         type="button"
+                        onClick={() =>
+                          setOpenProfileId((prev) => (prev === borrow.id ? null : borrow.id))
+                        }
+                        aria-expanded={openProfileId === borrow.id}
+                        aria-haspopup="dialog"
                         className="inline-flex items-center gap-2 rounded-full border border-blue-400/30 bg-blue-500/20 px-3 py-1 text-sm font-semibold text-blue-200"
                       >
                         <UserIcon className="w-4 h-4" />
                         {borrow.user?.name || 'Unknown Student'}
                       </button>
 
-                      <div className="hidden group-hover:block absolute right-0 mt-2 w-64 rounded-xl border border-white/20 bg-slate-900/95 p-4 text-left shadow-2xl z-20">
+                      <div
+                        className={`absolute right-0 bottom-full mb-2 w-64 rounded-xl border border-white/20 bg-slate-900/95 p-4 text-left shadow-2xl z-20 ${
+                          openProfileId === borrow.id ? 'block' : 'hidden'
+                        }`}
+                      >
                         <p className="text-xs uppercase tracking-wide text-gray-400 mb-2">
                           Student Details
                         </p>

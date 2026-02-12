@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-import { BookOpen, Home, BookMarked, PlusCircle, LogOut, User } from 'lucide-react';
+import { BookOpen, Home, BookMarked, PlusCircle, LogOut, User, Users } from 'lucide-react';
 
 const Navbar = () => {
   const { user, logout, isAdmin } = useAuth();
@@ -35,6 +35,7 @@ const Navbar = () => {
     { name: 'Books', path: '/books', icon: BookOpen, show: true },
     { name: 'My Issues', path: '/my-issues', icon: BookMarked, show: !isAdmin() },
     { name: 'Add Book', path: '/add-book', icon: PlusCircle, show: isAdmin() },
+    { name: 'Users', path: '/admin/users', icon: Users, show: isAdmin() },
   ];
 
   return (

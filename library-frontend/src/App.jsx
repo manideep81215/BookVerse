@@ -14,6 +14,7 @@ import Profile from './pages/Profile';
 import AddBook from './pages/AddBook';
 import AdminIssuedBooks from './pages/AdminIssuedBooks';
 import AdminReturnedBooks from './pages/AdminReturnedBooks';
+import AdminUsers from './pages/AdminUsers';
 
 function App() {
   return (
@@ -106,6 +107,15 @@ function App() {
             element={
               <ProtectedRoute adminOnly>
                 <AdminReturnedBooks />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin/users"
+            element={
+              <ProtectedRoute adminOnly>
+                <AdminUsers />
               </ProtectedRoute>
             }
           />

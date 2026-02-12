@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { Calendar, AlertCircle, CheckCircle, Clock } from 'lucide-react';
 import { issueAPI } from '../services/api';
 import toast from 'react-hot-toast';
@@ -8,7 +8,7 @@ const IssueCard = ({ issue, onReturn }) => {
   const borrowedDate = issue.borrowDate || issue.issueDate;
   const dueDate = issue.dueDate || null;
   const isReturned = issue.returned === true || issue.status === 'RETURNED';
-  const isOverdue = !isReturned && !!dueDate && new Date(dueDate) < new Date();
+  const isOverdue = !isReturned && !!dueDate && parseISO(dueDate) < new Date();
 
   const handleReturn = async () => {
     try {
@@ -50,19 +50,19 @@ const IssueCard = ({ issue, onReturn }) => {
             {borrowedDate && (
               <div className="flex items-center text-gray-400">
                 <Calendar className="w-4 h-4 mr-1" />
-                Borrowed: {format(new Date(borrowedDate), 'MMM dd, yyyy')}
+                Borrowed: {format(parseISO(borrowedDate), 'MMM dd, yyyy')}
               </div>
             )}
             {dueDate && (
               <div className={`flex items-center ${isOverdue ? 'text-red-400' : 'text-gray-400'}`}>
                 <Clock className="w-4 h-4 mr-1" />
-                Due: {format(new Date(dueDate), 'MMM dd, yyyy')}
+                Due: {format(parseISO(dueDate), 'MMM dd, yyyy')}
               </div>
             )}
             {isReturned && issue.returnDate && (
               <div className="flex items-center text-green-400">
                 <CheckCircle className="w-4 h-4 mr-1" />
-                Returned: {format(new Date(issue.returnDate), 'MMM dd, yyyy')}
+                Returned: {format(parseISO(issue.returnDate), 'MMM dd, yyyy')}
               </div>
             )}
           </div>

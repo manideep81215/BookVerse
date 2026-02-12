@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { Calendar, User as UserIcon, BookOpen, CheckCircle } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -101,14 +101,14 @@ const AdminReturnedBooks = () => {
                       <Calendar className="w-4 h-4 mr-2" />
                       Issued on:{' '}
                       {borrow.borrowDate
-                        ? format(new Date(borrow.borrowDate), 'MMM dd, yyyy')
+                        ? format(parseISO(borrow.borrowDate), 'MMM dd, yyyy')
                         : '-'}
                     </div>
                     <div className="flex items-center text-sm text-green-300">
                       <CheckCircle className="w-4 h-4 mr-2" />
                       Returned on:{' '}
                       {borrow.returnDate
-                        ? format(new Date(borrow.returnDate), 'MMM dd, yyyy')
+                        ? format(parseISO(borrow.returnDate), 'MMM dd, yyyy')
                         : '-'}
                     </div>
                     <p className="text-xs text-indigo-200">Borrow ID: {borrow.id}</p>

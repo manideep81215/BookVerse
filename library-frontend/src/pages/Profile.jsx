@@ -5,7 +5,7 @@ import Navbar from '../components/Navbar';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { useAuth } from '../context/AuthContext';
 import { authAPI, issueAPI } from '../services/api';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import toast from 'react-hot-toast';
 
 const Profile = () => {
@@ -37,8 +37,9 @@ const Profile = () => {
   }, [user?.id]);
 
   const latestIssues = useMemo(() => {
+    const toTime = (value) => (value ? parseISO(value).getTime() : 0);
     return [...issues]
-      .sort((a, b) => new Date(b.borrowDate || 0) - new Date(a.borrowDate || 0))
+      .sort((a, b) => toTime(b.borrowDate) - toTime(a.borrowDate))
       .slice(0, 8);
   }, [issues]);
 
@@ -204,13 +205,13 @@ const Profile = () => {
                     <div className="inline-flex items-center gap-2 text-indigo-100">
                       <Calendar className="w-4 h-4" />
                       Issued:{' '}
-                      {issue.borrowDate ? format(new Date(issue.borrowDate), 'MMM dd, yyyy') : '-'}
+                      {issue.borrowDate ? format(parseISO(issue.borrowDate), 'MMM dd, yyyy') : '-'}
                     </div>
                     {isReturned ? (
                       <div className="inline-flex items-center gap-2 text-green-300">
                         <CheckCircle className="w-4 h-4" />
                         Returned:{' '}
-                        {issue.returnDate ? format(new Date(issue.returnDate), 'MMM dd, yyyy') : '-'}
+                        {issue.returnDate ? format(parseISO(issue.returnDate), 'MMM dd, yyyy') : '-'}
                       </div>
                     ) : (
                       <div className="inline-flex items-center gap-2 text-amber-300">

@@ -8,11 +8,13 @@ import com.lib.library.Repository.BookRepository;
 import com.lib.library.Repository.BorrowRepository;
 import com.lib.library.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 @Service
@@ -23,6 +25,8 @@ public class BorrowService {
 
     private final BookRepository bookRepository;
     private final UserRepository userRepository;
+    @Value("${app.time-zone:UTC}")
+    private String appTimeZone;
 
 
     public Borrow borrowBook(Long userId, Long bookId) {
@@ -40,7 +44,7 @@ public class BorrowService {
         Borrow borrow = Borrow.builder()
                 .user(user)
                 .book(book)
-                .borrowDate(LocalDate.now())
+                .borrowDate(LocalDate.now(ZoneId.of(appTimeZone)))
                 .returned(false)
                 .build();
 
@@ -61,7 +65,7 @@ public class BorrowService {
         }
 
         borrow.setReturned(true);
-        borrow.setReturnDate(LocalDate.now());
+        borrow.setReturnDate(LocalDate.now(ZoneId.of(appTimeZone)));
 
         Book book = borrow.getBook();
         book.setAvailable(true);
